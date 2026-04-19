@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <title>Galéria</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<?php
+
+$mainFolder = "Galeria_A";
+$folders = scandir($mainFolder);
+$currentFolder = $_GET["folder"] ?? null;
+
+?>
+
+<!-- MENU -->
+<?php
+echo "<ul>";
+
+foreach ($folders as $folder) {
+
+    if ($folder == "." || $folder == "..") {
+        continue;
+    }
+
+    $name = str_replace(["-", "_", "~"], " ", $folder);
+    $name = strtolower($name);
+    $name = ucfirst($name);
+
+    $class = ($currentFolder == $folder) ? "selected" : "";
+
+    echo "<li><a href='?folder=$folder' class='$class'>$name</a></li>";
+}
+
+echo "</ul>";
+?>
+
+<hr>
+
+<!-- OBRÁZKY -->
+<?php
+
+if ($currentFolder) {
+
+    $path = $mainFolder . "/" . $currentFolder;
+    $files = scandir($path);
+
+    $jpg = [];
+    $png = [];
+    $gif = [];
+
+    foreach ($files as $file) {
+
+        if ($file == "." || $file == "..") continue;
+
+        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+
+        if ($ext == "jpg" || $ext == "jpeg") {
+            $jpg[] = $file;
+        } elseif ($ext == "png") {
+            $png[] = $file;
+        } elseif ($ext == "gif") {
+            $gif[] = $file;
+        }
+    }
+
+    echo "<h2>JPG obrázky</h2>";
+    foreach ($jpg as $img) {
+        echo "<a href='$path/$img' target='_blank'>
+                <img src='$path/$img' width='150'>
+              </a>";
+    }
+
+    echo "<h2>PNG obrázky</h2>";
+    foreach ($png as $img) {
+        echo "<a href='$path/$img' target='_blank'>
+                <img src='$path/$img' width='150'>
+              </a>";
+    }
+
+    echo "<h2>GIF obrázky</h2>";
+    foreach ($gif as $img) {
+        echo "<a href='$path/$img' target='_blank'>
+                <img src='$path/$img' width='150'>
+              </a>";
+    }
+}
+
+?>
+
+</body>
+</html>
